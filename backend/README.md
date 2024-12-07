@@ -6,14 +6,6 @@
 
 * **Endpoint:** `/users/register`
 * **Request Method:** `POST`
-* **Request Body:**# Backend API Documentation
-
-## API Endpoints
-
-### User Registration
-
-* **Endpoint:** `/users/register`
-* **Request Method:** `POST`
 * **Request Body:**
 	+ fullname (Object)
 		- firstname (String, minimum length: 3)
