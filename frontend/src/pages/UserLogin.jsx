@@ -1,19 +1,37 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import Safar from "../assets/Safar.png";
+import { UserDataContext } from "../context/UserContext.jsx";
+import axios from "axios";
+
 const UserLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [userData, setUserData] = useState({});
 
-  const submitHandler = (e) => {
+  const navigate = useNavigate();
+  const { user, setUser } = useContext(UserDataContext);
+
+  const submitHandler = async (e) => {
     e.preventDefault();
-    setUserData({
+    const user = {
       email: email,
       password: password,
-    });
+    };
+
+    const response = await axios.post(
+      `${import.meta.env.VITE_BASE_URL}/users/login`,
+      user
+    );
+
+    if (response.status === 200) {
+      const data = response.data;
+      localStorage.setItem("token", data.token);
+      setUser(data.user);
+    }
+
     setEmail("");
     setPassword("");
+    navigate("/home");
   };
 
   return (
@@ -22,7 +40,7 @@ const UserLogin = () => {
         <div className="flex justify-center items-center">
           <img className="w-40 md:w-80" src={Safar} alt="Safar" />
         </div>
-        <form action="" onSubmit={(e) => submitHandler(e)}>
+        <form onSubmit={(e) => submitHandler(e)}>
           <h3 className="text-lg mb-2">What's your email</h3>
           <input
             className="bg-[#eeeeee] py-3 px-4 rounded-md mb-7 border w-full text-lg placeholder:text-gray-400 placeholder:text-base focus:ring-blue-400"

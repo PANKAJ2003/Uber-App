@@ -4,8 +4,9 @@ import { validationResult } from "express-validator";
 import blacklistTokenModel from "../models/blacklistToken.models.js";
 
 export const registerCaptain = async (req, res, next) => {
+    
     const errors = validationResult(req);
-    if (!errors.isEmpty()) {
+    if (!errors.isEmpty()) {   
         return res.status(401).json({ errors: errors.array() });
     }
     const { fullname, email, password, vehicle } = req.body;
@@ -19,7 +20,7 @@ export const registerCaptain = async (req, res, next) => {
 
     const captain = await createCaptain({
         firstname: fullname.firstname,
-        lastname: fullname.lastname,
+        lastname: (fullname.lastname === "")? null: fullname.lastname,
         email: email,
         password: hashedPassword,
         color: vehicle.color,
@@ -67,6 +68,10 @@ export const getCaptainProfile = async (req, res, next) => {
 export const logoutCaptain = async (req, res, next) => {
     res.clearCookie("token");
     const token = req.cookies.token || req.headers.authorization.split(' ')[1];
-    await blacklistTokenModel.create({ token: token });
+
+    const isBlackListed = await blacklistTokenModel.findOne({ token: token });
+    if (!isBlackListed) {
+        await blacklistTokenModel.create({ token: token });
+    }
     res.status(200).json({ message: "Logged out" });
 }
