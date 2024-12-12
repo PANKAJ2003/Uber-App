@@ -7,6 +7,8 @@ import axios from "axios";
 const UserLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
   const { user, setUser } = useContext(UserDataContext);
@@ -18,20 +20,28 @@ const UserLogin = () => {
       password: password,
     };
 
-    const response = await axios.post(
-      `${import.meta.env.VITE_BASE_URL}/users/login`,
-      user
-    );
+    setIsLoading(true);
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/users/login`,
+        user
+      );
 
-    if (response.status === 200) {
-      const data = response.data;
-      localStorage.setItem("token", data.token);
-      setUser(data.user);
+      if (response.status === 200) {
+        const data = response.data;
+        localStorage.setItem("token", data.token);
+        setUser(data.user);
+      }
+
+      setError(null);
+      setEmail("");
+      setPassword("");
+      navigate("/home");
+    } catch (error) {
+      setError(error.response?.data?.message);
+    } finally {
+      setIsLoading(false);
     }
-
-    setEmail("");
-    setPassword("");
-    navigate("/home");
   };
 
   return (
@@ -61,8 +71,15 @@ const UserLogin = () => {
             type="password"
             placeholder="Password"
           />
-          <button className="bg-[#111111] font-semibold text-white py-3 px-4 rounded-md mb-2 w-full text-lg">
-            Login
+          {error && <p className="text-red-500">{error}</p>}
+          <button
+            type="submit"
+            className={`bg-[#111111] font-semibold text-white py-3 px-4 rounded-md mb-2 w-full text-lg ${
+              isLoading ? "opacity-50 cursor-not-allowed" : ""
+            }`}
+            disabled={isLoading}
+          >
+            {isLoading ? "Logging in..." : "Login"}
           </button>
         </form>
         <p>

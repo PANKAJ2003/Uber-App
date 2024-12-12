@@ -3,34 +3,48 @@ import { Link, useNavigate } from "react-router-dom";
 import Safar from "../assets/Safar.png";
 import axios from "axios";
 import { CaptainDataContext } from "../context/CaptainContext";
+
 const CaptainLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
-  const { captain, setCaptain } = useContext(CaptainDataContext);
+  const { setCaptain } = useContext(CaptainDataContext);
 
   const submitHandler = async (e) => {
     e.preventDefault();
-    const captain = {
-      email: email,
-      password: password,
-    };
 
-    const response = await axios.post(
-      `${import.meta.env.VITE_BASE_URL}/captains/login`,
-      captain
-    );
-
-    if (response.status === 200) {
-      const data = response.data;
-      localStorage.setItem("token", data.token);
-      setCaptain(data.captain);
-      navigate("/captainHome");
+    if (!email || !password) {
+      setError("Email and password are required.");
+      return;
     }
 
-    setEmail("");
-    setPassword("");
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const captain = { email, password };
+      const response = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/captains/login`,
+        captain
+      );
+
+      if (response.status === 200) {
+        const data = response.data;
+        localStorage.setItem("token", data.token);
+        setCaptain(data.captain);
+        navigate("/captainHome");
+      }
+    } catch (err) {
+      // Handle server or network errors
+      setError(
+        err.response?.data?.message || "An error occurred. Please try again."
+      );
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -39,7 +53,7 @@ const CaptainLogin = () => {
         <div className="flex justify-center items-center">
           <img className="w-40 md:w-80" src={Safar} alt="Safar" />
         </div>
-        <form action="" onSubmit={(e) => submitHandler(e)}>
+        <form onSubmit={submitHandler}>
           <h3 className="text-lg mb-2">What's your email</h3>
           <input
             className="bg-[#eeeeee] py-3 px-4 rounded-md mb-7 border w-full text-lg placeholder:text-gray-400 placeholder:text-base focus:ring-blue-400"
@@ -51,7 +65,6 @@ const CaptainLogin = () => {
           />
 
           <h3 className="text-lg mb-2">Enter password</h3>
-
           <input
             className="bg-[#eeeeee] py-3 px-4 rounded-md mb-7 border w-full text-lg placeholder:text-gray-400 placeholder:text-base focus:ring-blue-400"
             value={password}
@@ -60,8 +73,15 @@ const CaptainLogin = () => {
             type="password"
             placeholder="Password"
           />
-          <button className="bg-[#111111] font-semibold text-white py-3 px-4 rounded-md mb-2 w-full text-lg">
-            Login
+          {error && <p className="text-red-500">{error}</p>}
+          <button
+            type="submit"
+            className={`bg-[#111111] font-semibold text-white py-3 px-4 rounded-md mb-2 w-full text-lg ${
+              isLoading ? "opacity-50 cursor-not-allowed" : ""
+            }`}
+            disabled={isLoading}
+          >
+            {isLoading ? "Logging in..." : "Login"}
           </button>
         </form>
         <p>
