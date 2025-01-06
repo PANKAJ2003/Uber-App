@@ -11,16 +11,20 @@ import UserLogout from "./pages/UserLogout.jsx";
 import CaptainProtectedWrapper from "./pages/CaptainProtectedWrapper.jsx";
 import CaptainHome from "./pages/CaptainHome.jsx";
 import CaptainLogout from "./pages/CaptainLogout.jsx";
+import Riding from "./pages/Riding.jsx";
+import CaptainRiding from "./pages/CaptainRiding.jsx";
 
 function App() {
   return (
     <div className="font-lato">
       <Routes>
         <Route path="/" element={<Start />} />
+        <Route path="/riding" element={<Riding />} />
         <Route path="/login" element={<UserLogin />} />
         <Route path="/signup" element={<UserSignup />} />
         <Route path="/captain-login" element={<CaptainLogin />} />
         <Route path="/captain-signup" element={<CaptainSignup />} />
+        <Route path="/captain-riding" element={<CaptainRiding />} />
         <Route
           path="/home"
           element={

@@ -19,7 +19,7 @@ const Home = () => {
   const [vehiclePanel, setVehiclePanel] = useState(false);
   const [confirmRidePanel, setConfirmRidePanel] = useState(false);
   const [vehicleFound, setVehicleFound] = useState(false);
-  const [waitingForDriver, setWaitingForDriver] = useState(true);
+  const [waitingForDriver, setWaitingForDriver] = useState(false);
 
   const panelRef = useRef(null);
   const vehiclePanelRef = useRef(null);
