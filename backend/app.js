@@ -5,6 +5,8 @@ import cors from "cors";
 import { connnetToDB } from "./db/db.js";
 import { router as userRoutes } from "./routes/user.routes.js";
 import { router as captainRoutes } from "./routes/captain.routes.js";
+import { router as mapsRoutes } from "./routes/maps.routes.js";
+import { router as rideRoutes } from "./routes/ride.routes.js";
 import cookieParser from "cookie-parser";
 
 const app = express();
@@ -22,4 +24,6 @@ app.get("/", (req, res) => {
 
 app.use("/users", userRoutes);
 app.use("/captains", captainRoutes);
+app.use("/maps", mapsRoutes);
+app.use("/rides", rideRoutes);
 export default app;
