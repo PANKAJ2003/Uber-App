@@ -1,7 +1,19 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useContext } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Map from "../assets/DummyMap.png";
+import { SocketContext } from "../context/SocketContext.jsx";
+import LiveTracking from "../components/LiveTraking.jsx";
+
 const Riding = (props) => {
+  const navigate = useNavigate();
+
+  const { socket } = useContext(SocketContext);
+  socket.on("ride-ended", (ride) => {
+    navigate("/home");
+  });
+
+  const location = useLocation();
+  const rideData = location.state.ride;
   return (
     <div className="h-screen">
       <Link
@@ -11,7 +23,7 @@ const Riding = (props) => {
         <i className="text-lg font-medium ri-home-5-line"></i>
       </Link>
       <div className="h-1/2">
-        <img className="h-full w-full object-cover" src={Map} alt="" />
+        <LiveTracking />
       </div>
       <div className="h-1/2 p-4">
         <div className="flex items-center justify-between">
@@ -22,13 +34,13 @@ const Riding = (props) => {
           />
           <div className="text-right">
             <h2 className="text-lg font-medium capitalize">
-              {props.ride?.captain.fullname.firstname}
+              {`${rideData?.captain.fullname.firstname} ${rideData?.captain.fullname.lastname}`}
             </h2>
             <h4 className="text-xl font-semibold -mt-1 -mb-1">
-              {props.ride?.captain.vehicle.plate}
+              {rideData?.captain.vehicle.plate}
             </h4>
             <p className="text-sm text-gray-600">Maruti Suzuki Alto</p>
-            <h1 className="text-lg font-semibold"> {props.ride?.otp} </h1>
+            <h1 className="text-lg font-semibold">{rideData?.otp} </h1>
           </div>
         </div>
 
@@ -37,16 +49,16 @@ const Riding = (props) => {
             <div className="flex items-center gap-5 p-3 border-b-2">
               <i className="text-lg ri-map-pin-2-fill"></i>
               <div>
-                <h3 className="text-lg font-medium">562/11-A</h3>
+                {/* <h3 className="text-lg font-medium">562/11-A</h3> */}
                 <p className="text-sm -mt-1 text-gray-600">
-                  {props.ride?.destination}
+                  {rideData?.destination}
                 </p>
               </div>
             </div>
             <div className="flex items-center gap-5 p-3">
               <i className="ri-currency-line"></i>
               <div>
-                <h3 className="text-lg font-medium">₹{props.ride?.fare} </h3>
+                <h3 className="text-lg font-medium">₹{rideData?.fare} </h3>
                 <p className="text-sm -mt-1 text-gray-600">Cash</p>
               </div>
             </div>

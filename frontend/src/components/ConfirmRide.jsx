@@ -2,7 +2,16 @@ import React from "react";
 import carIcon from "../assets/carIcon.png";
 import "remixicon/fonts/remixicon.css";
 
-const ConfirmRide = ({ setConfirmRidePanel, setVehicleFound }) => {
+
+const ConfirmRide = ({
+  setConfirmRidePanel,
+  setVehicleFound,
+  pickUp,
+  destination,
+  fares,
+  createRide,
+  setVehiclePanel
+}) => {
   return (
     <div>
       <h5
@@ -21,25 +30,23 @@ const ConfirmRide = ({ setConfirmRidePanel, setVehicleFound }) => {
           <div className=" flex items-center gap-5 p-3 border-b-2">
             <i className="text-lg ri-map-pin-fill"></i>
             <div>
-              <h3 className="text-lg font-medium ">523/11-A</h3>
-              <p className="text-sm -mt-1 text-gray-600">
-                Clement Towm, Dehradun
+              {/* <h3 className="text-lg font-medium ">523/11-A</h3> */}
+              <p className="text-sm -mt-1 font-medium text-gray-600">
+                {pickUp}
               </p>
             </div>
           </div>
           <div className=" flex items-center gap-5 p-3 border-b-2">
             <i className="ri-map-pin-line"></i>
             <div>
-              <h3 className="text-lg font-medium ">523/11-A</h3>
-              <p className="text-sm -mt-1 text-gray-600">
-                Clement Towm, Dehradun
-              </p>
+              {/* <h3 className="text-lg font-medium ">523/11-A</h3> */}
+              <p className="text-sm -mt-1 text-gray-600">{destination}</p>
             </div>
           </div>
           <div className=" flex items-center gap-5 p-3">
             <i className="ri-money-rupee-circle-fill"></i>
             <div>
-              <h3 className="text-lg font-medium ">₹194.38</h3>
+              <h3 className="text-lg font-medium ">₹{fares}</h3>
               <p className="text-sm -mt-1 text-gray-600">Cash</p>
             </div>
           </div>
@@ -47,8 +54,10 @@ const ConfirmRide = ({ setConfirmRidePanel, setVehicleFound }) => {
         <button
           className="w-full mt-4 bg-green-600 p-3 rounded-md text-white font-semibold"
           onClick={() => {
+            createRide();
             setVehicleFound(true);
             setConfirmRidePanel(false);
+            setVehiclePanel(false);
           }}
         >
           Confirm

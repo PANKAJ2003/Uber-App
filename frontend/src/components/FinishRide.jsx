@@ -1,6 +1,30 @@
 import React from "react";
-import { Link } from "react-router-dom";
-const FinishRide = ({ setFinishRidePanel }) => {
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+const FinishRide = ({ setFinishRidePanel, ride }) => {
+  const navigate = useNavigate();
+
+  const handleFinishRide = async (e) => {
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/rides/end-ride`,
+        {
+          rideId: ride._id,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      if (response.status === 200) {
+        setFinishRidePanel(false);
+        navigate("/captainHome");
+      }
+    } catch (error) {
+      throw new Error(error);
+    }
+  };
   return (
     <div>
       <h5
@@ -19,9 +43,11 @@ const FinishRide = ({ setFinishRidePanel }) => {
             src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRdlMd7stpWUCmjpfRjUsQ72xSWikidbgaI1w&s"
             alt=""
           />
-          <h2 className="text-lg font-medium">Harsh Patel</h2>
+          <h2 className="text-lg font-medium capitalize">{`${ride?.user?.fullname?.firstname} ${ride?.user?.fullname?.lastname}`}</h2>
         </div>
-        <h5 className="text-lg font-semibold">2.2 KM</h5>
+        <h5 className="text-lg font-semibold">
+          {Math.round(ride?.distance / 100) / 10} Km
+        </h5>
       </div>
 
       <div className="flex gap-2 mt-5 flex-col justify-between items-center">
@@ -29,36 +55,32 @@ const FinishRide = ({ setFinishRidePanel }) => {
           <div className=" flex items-center gap-5 p-3 border-b-2">
             <i className="text-lg ri-map-pin-fill"></i>
             <div>
-              <h3 className="text-lg font-medium ">523/11-A</h3>
-              <p className="text-sm -mt-1 text-gray-600">
-                Clement Towm, Dehradun
-              </p>
+              {/* <h3 className="text-lg font-medium ">523/11-A</h3> */}
+              <p className="text-sm -mt-1 text-gray-600">{ride?.pickup}</p>
             </div>
           </div>
           <div className=" flex items-center gap-5 p-3 border-b-2">
             <i className="ri-map-pin-line"></i>
             <div>
-              <h3 className="text-lg font-medium ">523/11-A</h3>
-              <p className="text-sm -mt-1 text-gray-600">
-                Clement Towm, Dehradun
-              </p>
+              {/* <h3 className="text-lg font-medium ">523/11-A</h3> */}
+              <p className="text-sm -mt-1 text-gray-600">{ride?.destination}</p>
             </div>
           </div>
           <div className=" flex items-center gap-5 p-3">
             <i className="ri-money-rupee-circle-fill"></i>
             <div>
-              <h3 className="text-lg font-medium ">₹194.38</h3>
+              <h3 className="text-lg font-medium ">₹{ride?.fare}</h3>
               <p className="text-sm -mt-1 text-gray-600">Cash</p>
             </div>
           </div>
         </div>
         <div className="w-full mt-6">
-          <Link
-            to="/captainHome"
+          <button
+            onClick={handleFinishRide}
             className="w-full mt-3 bg-green-600 p-3 rounded-md text-white font-semibold flex justify-center text-lg"
           >
             Finish Ride
-          </Link>
+          </button>
         </div>
       </div>
     </div>

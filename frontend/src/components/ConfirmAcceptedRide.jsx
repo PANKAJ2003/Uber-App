@@ -1,14 +1,68 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
-const ConfirmAcceptedRide = ({ setRidePopUpPanel, setAcceptdRidePopUp }) => {
+const ConfirmAcceptedRide = ({
+  setRidePopUpPanel,
+  setAcceptdRidePopUp,
+  newRide,
+}) => {
   const [otp, setOTP] = useState("");
-  const submitHandler = (e) => {
+  const navigate = useNavigate();
+  const [error, setError] = useState(null);
+
+  const submitHandler = async (e) => {
     e.preventDefault();
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_BASE_URL}/rides/start-ride`,
+        {
+          params: {
+            rideId: newRide._id,
+            otp: otp,
+          },
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        setRidePopUpPanel(false);
+        setAcceptdRidePopUp(false);
+        navigate("/captain-riding", { state: { ride: newRide } });
+      }
+    } catch (error) {
+      setError(error.response.data.error);
+    }
+  };
+
+  const handleCancleRide = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/rides/cancle-ride`,
+        {
+          rideId: newRide._id,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      if (response.status === 200) {
+        setRidePopUpPanel(false);
+        setAcceptdRidePopUp(false);
+        navigate("/captainHome");
+      }
+    } catch (error) {
+      throw new Error(error);
+    }
   };
   return (
     <div>
-      <h5
+      {/* <h5
         className="absolute top-1 w-[93%] text-center text-2xl p-1 hover:bg-slate-200 rounded-md "
         onClick={() => {
           setAcceptdRidePopUp(false);
@@ -16,54 +70,52 @@ const ConfirmAcceptedRide = ({ setRidePopUpPanel, setAcceptdRidePopUp }) => {
         }}
       >
         <i className="ri-arrow-down-s-line"></i>
-      </h5>
+      </h5> */}
       <h3 className="text-2xl font-semibold my-4">Confirm Ride</h3>
-      <div className="flex items-center justify-between p-3 mt-4 bg-yellow-400 rounded-lg ">
+      <div className="flex items-center justify-between p-3 mt-4 bg-yellow-400 rounded-lg">
         <div className="flex items-center gap-3">
           <img
             className="h-10 w-10 rounded-full object-cover"
             src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRdlMd7stpWUCmjpfRjUsQ72xSWikidbgaI1w&s"
             alt=""
           />
-          <h2 className="text-lg font-medium">Harsh Patel</h2>
+          <h2 className="text-lg font-medium capitalize">{`${newRide?.user?.fullname.firstname} ${newRide?.user?.fullname.lastname}`}</h2>
         </div>
-        <h5 className="text-lg font-semibold">2.2 KM</h5>
+        <h5 className="text-lg font-semibold">
+          {Math.round(newRide?.distance / 100) / 10} Km
+        </h5>
       </div>
 
-      <div className="flex gap-2 mt-5 flex-col justify-between items-center">
+      <div className="flex  mt-5 flex-col justify-between items-center">
         <div className="w-full">
           <div className=" flex items-center gap-5 p-3 border-b-2">
             <i className="text-lg ri-map-pin-fill"></i>
             <div>
-              <h3 className="text-lg font-medium ">523/11-A</h3>
-              <p className="text-sm -mt-1 text-gray-600">
-                Clement Towm, Dehradun
+              {/* <h3 className="text-lg font-medium ">523/11-A</h3> */}
+              <p className="text-sm -mt-1 text-gray-600 capitalize">
+                {newRide?.pickup}
               </p>
             </div>
           </div>
           <div className=" flex items-center gap-5 p-3 border-b-2">
             <i className="ri-map-pin-line"></i>
             <div>
-              <h3 className="text-lg font-medium ">523/11-A</h3>
-              <p className="text-sm -mt-1 text-gray-600">
-                Clement Towm, Dehradun
+              {/* <h3 className="text-lg font-medium ">523/11-A</h3> */}
+              <p className="text-sm -mt-1 text-gray-600 capitalize">
+                {newRide?.destination}
               </p>
             </div>
           </div>
           <div className=" flex items-center gap-5 p-3">
             <i className="ri-money-rupee-circle-fill"></i>
             <div>
-              <h3 className="text-lg font-medium ">₹194.38</h3>
-              <p className="text-sm -mt-1 text-gray-600">Cash</p>
+              <h3 className="text-lg font-medium ">₹{newRide?.fare}</h3>
+              <p className="text-sm text-gray-600">Cash</p>
             </div>
           </div>
         </div>
         <div className="w-full mt-6">
-          <form
-            onSubmit={(e) => {
-              submitHandler(e);
-            }}
-          >
+          <form onSubmit={submitHandler}>
             <input
               type="text"
               placeholder="Enter OTP"
@@ -76,22 +128,17 @@ const ConfirmAcceptedRide = ({ setRidePopUpPanel, setAcceptdRidePopUp }) => {
                 setOTP(e.target.value);
               }}
             />
+            {error && <p className="text-red-600">{error}</p>}
 
             <button
               className="w-full mt-2 text-lg bg-red-500 p-3 rounded-md text-gray-600 font-semibold"
-              onClick={() => {
-                setRidePopUpPanel(false);
-                setAcceptdRidePopUp(false);
-              }}
+              onClick={handleCancleRide}
             >
               Cancle
             </button>
-            <Link
-              to="/captain-riding"
-              className="w-full mt-3 text-lg bg-green-600 p-3 rounded-md text-white font-semibold flex justify-center"
-            >
+            <button className="w-full mt-3 text-lg bg-green-600 p-3 rounded-md text-white font-semibold flex justify-center">
               Confirm
-            </Link>
+            </button>
           </form>
         </div>
       </div>

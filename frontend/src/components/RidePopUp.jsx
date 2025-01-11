@@ -1,5 +1,5 @@
 import React from "react";
-const RidePopUp = ({ setRidePopUpPanel , setAcceptdRidePopUp }) => {
+const RidePopUp = ({ setRidePopUpPanel , setAcceptdRidePopUp, newRide, acceptRide }) => {
   return (
     <div>
       <h5
@@ -18,9 +18,9 @@ const RidePopUp = ({ setRidePopUpPanel , setAcceptdRidePopUp }) => {
             src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRdlMd7stpWUCmjpfRjUsQ72xSWikidbgaI1w&s"
             alt=""
           />
-          <h2 className="text-lg font-medium">Harsh Patel</h2>
+          <h2 className="text-lg font-medium capitalize">{`${newRide?.user?.fullname.firstname} ${newRide?.user?.fullname.lastname}`}</h2>
         </div>
-        <h5 className="text-lg font-semibold">2.2 KM</h5>
+        <h5 className="text-lg font-semibold">{Math.round(newRide?.distance/100)/10} Km</h5>
       </div>
 
       <div className="flex gap-2 mt-5 flex-col justify-between items-center">
@@ -28,25 +28,25 @@ const RidePopUp = ({ setRidePopUpPanel , setAcceptdRidePopUp }) => {
           <div className=" flex items-center gap-5 p-3 border-b-2">
             <i className="text-lg ri-map-pin-fill"></i>
             <div>
-              <h3 className="text-lg font-medium ">523/11-A</h3>
-              <p className="text-sm -mt-1 text-gray-600">
-                Clement Towm, Dehradun
+              {/* <h3 className="text-lg font-medium ">523/11-A</h3> */}
+              <p className="text-sm -mt-1 text-gray-600 capitalize">
+                {newRide?.pickup}
               </p>
             </div>
           </div>
           <div className=" flex items-center gap-5 p-3 border-b-2">
             <i className="ri-map-pin-line"></i>
             <div>
-              <h3 className="text-lg font-medium ">523/11-A</h3>
-              <p className="text-sm -mt-1 text-gray-600">
-                Clement Towm, Dehradun
+              {/* <h3 className="text-lg font-medium ">523/11-A</h3> */}
+              <p className="text-sm -mt-1 text-gray-600 capitalize">
+                {newRide?.destination}
               </p>
             </div>
           </div>
           <div className=" flex items-center gap-5 p-3">
             <i className="ri-money-rupee-circle-fill"></i>
             <div>
-              <h3 className="text-lg font-medium ">₹194.38</h3>
+              <h3 className="text-lg font-medium ">₹{newRide?.fare}</h3>
               <p className="text-sm -mt-1 text-gray-600">Cash</p>
             </div>
           </div>
@@ -61,7 +61,11 @@ const RidePopUp = ({ setRidePopUpPanel , setAcceptdRidePopUp }) => {
             Ignore
           </button>
           <button className="w-full bg-green-600 p-3 rounded-md text-white font-semibold flex justify-center"
-          onClick={()=>setAcceptdRidePopUp(true)}>
+          onClick={()=>{
+            setAcceptdRidePopUp(true)
+            setRidePopUpPanel(false)
+            acceptRide()
+          }}>
             Accept
           </button>
         </div>

@@ -26,7 +26,7 @@ const UserLogin = () => {
         `${import.meta.env.VITE_BASE_URL}/users/login`,
         user
       );
-
+      
       if (response.status === 200) {
         const data = response.data;
         localStorage.setItem("token", data.token);

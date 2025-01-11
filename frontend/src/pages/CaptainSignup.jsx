@@ -41,7 +41,7 @@ const CaptainSignup = () => {
     if (response.status === 200) {
       setCaptain(newCaptain);
       localStorage.setItem("token", response.data.token);
-      navigate("captainHome");
+      navigate("/captainHome");
     }
 
     setFirstname("");
@@ -60,7 +60,7 @@ const CaptainSignup = () => {
         <div className="flex justify-center items-center">
           <img className="w-16  md:w-48" src={Safar} alt="Safar" />
         </div>
-        <form action="" onSubmit={(e) => submitHandler(e)}>
+        <form onSubmit={(e) => submitHandler(e)}>
           <h3 className="text-lg mb-2">What's your Name</h3>
           <div className="flex gap-4">
             <input
